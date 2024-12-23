@@ -3,9 +3,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from main import create_shacl_shapes
 from rdflib import Literal, Namespace, URIRef
 from rdflib.namespace import RDF
+from src.main import create_shacl_shapes
 
 
 class TestTTLToSHACL(unittest.TestCase):
@@ -38,7 +38,7 @@ ex:OtherClass a owl:Class .
     def test_basic_shape_creation(self):
         shacl_graph = create_shacl_shapes(self.input_file)
         output_file = Path(self.temp_dir) / "basic_shape.ttl"
-        shacl_graph.serialize(destination=output_file, format="turtle")
+        shacl_graph.serialize(destination=output_file, format="turtle", encoding="utf-8")
         
         SH = Namespace("http://www.w3.org/ns/shacl#")
         EX = Namespace("http://example.org/")
@@ -50,7 +50,7 @@ ex:OtherClass a owl:Class .
     def test_property_constraints(self):
         shacl_graph = create_shacl_shapes(self.input_file)
         output_file = Path(self.temp_dir) / "property_constraints.ttl"
-        shacl_graph.serialize(destination=output_file, format="turtle")
+        shacl_graph.serialize(destination=output_file, format="turtle", encoding="utf-8")
         
         SH = Namespace("http://www.w3.org/ns/shacl#")
         EX = Namespace("http://example.org/")
@@ -96,7 +96,7 @@ ex:NoDescClass a owl:Class .
             
         shacl_graph = create_shacl_shapes(no_desc_file)
         output_file = Path(self.temp_dir) / "no_description.ttl"
-        shacl_graph.serialize(destination=output_file, format="turtle")
+        shacl_graph.serialize(destination=output_file, format="turtle", encoding="utf-8")
         
         self.assertEqual(len(list(shacl_graph.subjects(RDF.type, URIRef("http://www.w3.org/ns/shacl#NodeShape")))), 0)
 
