@@ -39,7 +39,7 @@ poetry install
 To run the tool, use the following command:
 
 ```bash
-poetry run src.main <input_file> <output_file>
+poetry run extractor <input_file> <output_file>
 ```
 
 Or if you want to run it directly:
@@ -54,7 +54,7 @@ where:
 
 Example:
 ```bash
-python -m main ontology.ttl shapes.ttl
+poetry run extractor ontology.ttl shapes.ttl
 ```
 
 ## Testing
