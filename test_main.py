@@ -29,7 +29,7 @@ ex:TestClass a owl:Class ;
 ex:OtherClass a owl:Class .
 '''
         self.input_file = Path(self.temp_dir) / "test.ttl"
-        with open(self.input_file, 'w') as f:
+        with open(self.input_file, 'w', encoding='utf-8') as f:
             f.write(self.test_data)
 
     def tearDown(self):
@@ -86,7 +86,7 @@ ex:OtherClass a owl:Class .
 
     def test_no_description(self):
         no_desc_file = Path(self.temp_dir) / "no_desc.ttl"
-        with open(no_desc_file, 'w') as f:
+        with open(no_desc_file, 'w', encoding='utf-8') as f:
             f.write("""
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix ex: <http://example.org/> .

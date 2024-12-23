@@ -7,7 +7,7 @@ from rdflib.namespace import OWL, RDF, XSD
 
 def create_shacl_shapes(input_file: str) -> Graph:
     g = Graph()
-    g.parse(input_file, format='turtle')
+    g.parse(input_file, format='turtle', encoding='utf-8')
     
     shacl = Graph()
     SH = Namespace("http://www.w3.org/ns/shacl#")
