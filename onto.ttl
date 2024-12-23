@@ -1492,4 +1492,3 @@ In SKG-IF, it is used to link to entities belonging to the following data types 
     rdfs:comment "SKG-O, the SKG-IF Ontology, is not yet another bibliographic ontology. Rather it is just a place where existing and complementary ontological entities from several other ontologies, all employed in the Scientific Knowledge Graph Interoperability Framework (SKG-IF), are grouped together for the purpose of providing descriptive metadata compliant with the SKG-IF Data Model." ;
     owl:versionIRI <https://w3id.org/skg-if/data-model/ontology/1.0.0/> ;
     owl:versionInfo "1.0.0" .
-

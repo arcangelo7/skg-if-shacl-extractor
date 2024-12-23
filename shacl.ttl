@@ -1,0 +1,486 @@
+@prefix bido: <http://purl.org/spar/bido/> .
+@prefix cito: <http://purl.org/spar/cito/> .
+@prefix co: <http://purl.org/co/> .
+@prefix datacite: <http://purl.org/spar/datacite/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix frapo: <http://purl.org/cerif/frapo/> .
+@prefix frbr: <http://purl.org/vocab/frbr/core#> .
+@prefix literal: <http://www.essepuntato.it/2010/06/literalreification/> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
+@prefix pro: <http://purl.org/spar/pro/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix pso: <http://purl.org/spar/pso/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix schema: <https://schema.org/> .
+@prefix scoro: <http://purl.org/spar/scoro/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ti: <http://www.ontologydesignpatterns.org/cp/owl/timeinterval.owl#> .
+@prefix tvc: <http://www.essepuntato.it/2012/04/tvc/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+frapo:GrantShape a sh:NodeShape ;
+    sh:property [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path frapo:hasCallIdentifier ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path dcterms:abstract ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path frapo:hasCurrencyCode ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path frapo:hasAcronym ],
+        [ sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path prism:keyword ],
+        [ sh:class foaf:Document ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path foaf:homepage ],
+        [ sh:datatype xsd:float ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path frapo:hasCurrency ],
+        [ sh:class datacite:Identifier ;
+            sh:minCount 0 ;
+            sh:path datacite:hasIdentifier ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path frapo:hasGrantNumber ],
+        [ sh:class pro:RoleInTime ;
+            sh:minCount 0 ;
+            sh:path pro:isRelatedToRoleInTime ],
+        [ sh:class frapo:FundingAgency ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path frapo:hasFundingAgency ],
+        [ sh:class ti:TimeInterval ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:temporal ],
+        [ sh:class foaf:Organization ;
+            sh:minCount 0 ;
+            sh:path frapo:supports ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path dcterms:title ] ;
+    sh:targetClass frapo:Grant .
+
+dcterms:StandardShape a sh:NodeShape ;
+    sh:property [ sh:minCount 1 ;
+            sh:path dcterms:coverage ],
+        [ sh:class datacite:IdentifierScheme ;
+            sh:minCount 1 ;
+            sh:path dcterms:requires ] ;
+    sh:targetClass dcterms:Standard .
+
+datacite:IdentifierShape a sh:NodeShape ;
+    sh:property [ sh:minCount 1 ;
+            sh:nodeKind sh:Literal ;
+            sh:path literal:hasLiteralValue ],
+        [ sh:class datacite:IdentifierScheme ;
+            sh:minCount 1 ;
+            sh:path datacite:usesIdentifierScheme ] ;
+    sh:targetClass datacite:Identifier .
+
+fabio:BibliometricDataInTimeShape a sh:NodeShape ;
+    sh:property [ sh:class fabio:SubjectTerm ;
+            sh:minCount 1 ;
+            sh:path bido:withBibliometricData ],
+        [ sh:class prov:Activity ;
+            sh:minCount 0 ;
+            sh:path prov:wasGeneratedBy ] ;
+    sh:targetClass fabio:BibliometricDataInTime .
+
+fabio:ExpressionCollectionShape a sh:NodeShape ;
+    sh:property [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path dcterms:title ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path frapo:hasAcronym ],
+        [ sh:class datacite:Identifier ;
+            sh:minCount 0 ;
+            sh:path datacite:hasIdentifier ],
+        [ sh:class pso:StatusInTime ;
+            sh:minCount 1 ;
+            sh:path pso:holdsStatusInTime ],
+        [ sh:class pro:RoleInTime ;
+            sh:minCount 0 ;
+            sh:path pro:isDocumentContextFor ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:created ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path prism:seriesTitle ] ;
+    sh:targetClass fabio:ExpressionCollection .
+
+fabio:ExpressionShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasDateReceived ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasAccessDate ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasDistributionDate ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasDepositDate ],
+        [ sh:class fabio:Expression ;
+            sh:minCount 0 ;
+            sh:path frbr:partOf ],
+        [ sh:class skos:Concept ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path rdf:type ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasCorrectionDate ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:valid ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path prism:volume ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasEmbargoDate ],
+        [ sh:class pso:StatusInTime ;
+            sh:minCount 1 ;
+            sh:path pso:holdsStatusInTime ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasRetractionDate ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:dateCopyrighted ],
+        [ sh:class dcat:DataService ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcat:accessService ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasRequestDate ],
+        [ sh:class fabio:Manifestation ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path frbr:embodiment ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:dateAccepted ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:modified ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasDecisionDate ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasDateCollected ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path prism:versionIdentifier ],
+        [ sh:class datacite:Identifier ;
+            sh:minCount 0 ;
+            sh:path datacite:hasIdentifier ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path prism:edition ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path fabio:hasSequenceIdentifier ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:created ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path prism:issueIdentifier ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:issued ] ;
+    sh:targetClass fabio:Expression .
+
+fabio:ManifestationShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:minCount 1 ;
+            sh:path prism:startingPage ],
+        [ sh:datatype xsd:string ;
+            sh:minCount 1 ;
+            sh:path prism:endingPage ] ;
+    sh:targetClass fabio:Manifestation .
+
+fabio:SubjectTermShape a sh:NodeShape ;
+    sh:property [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path skos:prefLabel ],
+        [ sh:class datacite:Identifier ;
+            sh:minCount 0 ;
+            sh:path datacite:hasIdentifier ] ;
+    sh:targetClass fabio:SubjectTerm .
+
+fabio:WorkShape a sh:NodeShape ;
+    sh:property [ sh:class fabio:Work ;
+            sh:minCount 0 ;
+            sh:path frbr:supplement ],
+        [ sh:class scoro:ContributionSituation ;
+            sh:minCount 0 ;
+            sh:path pro:isRelatedToRoleInTime ],
+        [ sh:class datacite:Identifier ;
+            sh:minCount 0 ;
+            sh:path datacite:hasIdentifier ],
+        [ sh:class frapo:Grant ;
+            sh:minCount 0 ;
+            sh:path frapo:isFundedBy ],
+        [ sh:class pro:RoleInTime ;
+            sh:minCount 0 ;
+            sh:path pro:isRelatedToRoleInTime ],
+        [ sh:class fabio:Expression ;
+            sh:minCount 0 ;
+            sh:path frbr:realization ],
+        [ sh:class fabio:Work ;
+            sh:minCount 0 ;
+            sh:path frbr:revisionOf ],
+        [ sh:class fabio:Work ;
+            sh:minCount 0 ;
+            sh:path cito:cites ],
+        [ sh:class fabio:Work ;
+            sh:minCount 0 ;
+            sh:path frbr:partOf ],
+        [ sh:class fabio:BibliometricDataInTime ;
+            sh:minCount 0 ;
+            sh:path bido:holdsBibliometricDataInTime ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path dcterms:abstract ],
+        [ sh:class fabio:Work ;
+            sh:minCount 0 ;
+            sh:path cito:isDocumentedBy ],
+        [ sh:class foaf:Organization ;
+            sh:minCount 0 ;
+            sh:path dcterms:relation ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path dcterms:title ] ;
+    sh:targetClass fabio:Work .
+
+pro:RoleInTimeShape a sh:NodeShape ;
+    sh:property [ sh:class foaf:Organization ;
+            sh:minCount 0 ;
+            sh:path pro:relatesToOrganization ],
+        [ sh:class scoro:ProjectRole ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path pro:withRole ],
+        [ sh:class ti:TimeInterval ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path tvc:atTime ],
+        [ sh:class foaf:Agent ;
+            sh:minCount 1 ;
+            sh:path pro:isHeldBy ],
+        [ sh:class pro:Role ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path pro:withRole ],
+        [ sh:datatype xsd:positiveInteger ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path co:index ],
+        [ sh:class scoro:Contribution ;
+            sh:minCount 0 ;
+            sh:path scoro:withContribution ] ;
+    sh:targetClass pro:RoleInTime .
+
+pso:StatusInTimeShape a sh:NodeShape ;
+    sh:property [ sh:class pso:PublicationStatus ;
+            sh:minCount 1 ;
+            sh:path pso:withStatus ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:description ] ;
+    sh:targetClass pso:StatusInTime .
+
+scoro:ContributionSituationShape a sh:NodeShape ;
+    sh:property [ sh:class foaf:Organization ;
+            sh:minCount 0 ;
+            sh:path pro:relatesToOrganization ],
+        [ sh:class scoro:Contribution ;
+            sh:minCount 0 ;
+            sh:path scoro:withContribution ],
+        [ sh:class foaf:Agent ;
+            sh:minCount 1 ;
+            sh:path pro:isHeldBy ],
+        [ sh:datatype xsd:positiveInteger ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path co:index ],
+        [ sh:class pro:Role ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path pro:withRole ] ;
+    sh:targetClass scoro:ContributionSituation .
+
+ti:TimeIntervalShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:dateTime ;
+            sh:minCount 1 ;
+            sh:path ti:hasIntervalStartDate ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path ti:hasIntervalEndDate ] ;
+    sh:targetClass ti:TimeInterval .
+
+skos:ConceptShape a sh:NodeShape ;
+    sh:property [ sh:class skos:ConceptScheme ;
+            sh:minCount 1 ;
+            sh:path skos:inScheme ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path skos:prefLabel ] ;
+    sh:targetClass skos:Concept .
+
+dcat:DataServiceShape a sh:NodeShape ;
+    sh:property [ sh:class datacite:Identifier ;
+            sh:minCount 0 ;
+            sh:path datacite:hasIdentifier ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path foaf:name ],
+        [ sh:class schema:Audience ;
+            sh:minCount 0 ;
+            sh:path schema:audience ],
+        [ sh:class odrl:Policy ;
+            sh:minCount 0 ;
+            sh:path odrl:hasPolicy ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcat:theme ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:subject ],
+        [ sh:minCount 1 ;
+            sh:path dcterms:coverage ],
+        [ sh:class dcterms:Standard ;
+            sh:minCount 0 ;
+            sh:path dcterms:conformsTo ] ;
+    sh:targetClass dcat:DataService .
+
+odrl:PolicyShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path dcterms:description ],
+        [ sh:class foaf:Document ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path foaf:page ],
+        [ sh:class odrl:Action ;
+            sh:minCount 1 ;
+            sh:path odrl:action ],
+        [ sh:minCount 0 ;
+            sh:path odrl:target ] ;
+    sh:targetClass odrl:Policy .
+
+prov:ActivityShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:float ;
+            sh:minCount 1 ;
+            sh:path rdf:value ],
+        [ sh:class foaf:Agent ;
+            sh:minCount 1 ;
+            sh:path prov:wasAssociatedWith ] ;
+    sh:targetClass prov:Activity .
+
+foaf:AgentShape a sh:NodeShape ;
+    sh:property [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path foaf:name ],
+        [ sh:class datacite:Identifier ;
+            sh:minCount 0 ;
+            sh:path datacite:hasIdentifier ] ;
+    sh:targetClass foaf:Agent .
+
+foaf:OrganizationShape a sh:NodeShape ;
+    sh:property [ sh:class foaf:Document ;
+            sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:path foaf:homepage ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path frapo:hasAcronym ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path frapo:hasCountry ],
+        [ sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path skos:altLabel ] ;
+    sh:targetClass foaf:Organization .
+
+foaf:PersonShape a sh:NodeShape ;
+    sh:property [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path foaf:familyName ],
+        [ sh:class pro:RoleInTime ;
+            sh:minCount 0 ;
+            sh:path pro:holdsRoleInTime ],
+        [ sh:maxCount 1 ;
+            sh:minCount 0 ;
+            sh:nodeKind sh:Literal ;
+            sh:path foaf:givenName ] ;
+    sh:targetClass foaf:Person .
+
+schema:AudienceShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:minCount 1 ;
+            sh:path schema:audienceType ] ;
+    sh:targetClass schema:Audience .
+
