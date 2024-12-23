@@ -2,8 +2,9 @@ import shutil
 import tempfile
 import unittest
 from pathlib import Path
+import unittest.mock
 
-from rdflib import Literal, Namespace, URIRef
+from rdflib import Literal, Namespace, URIRef, Graph
 from rdflib.namespace import RDF
 from src.main import create_shacl_shapes
 
@@ -99,6 +100,22 @@ ex:NoDescClass a owl:Class .
         shacl_graph.serialize(destination=output_file, format="turtle", encoding="utf-8")
         
         self.assertEqual(len(list(shacl_graph.subjects(RDF.type, URIRef("http://www.w3.org/ns/shacl#NodeShape")))), 0)
+
+    def test_main_function(self):
+        input_file = self.input_file
+        output_file = Path(self.temp_dir) / "test_main_output.ttl"
+        
+        test_args = ['prog_name', str(input_file), str(output_file)]
+        with unittest.mock.patch('sys.argv', test_args):
+            from src.main import main
+            main()
+        
+        self.assertTrue(output_file.exists())
+        g = Graph()
+        g.parse(output_file, format='turtle')
+        
+        SH = Namespace("http://www.w3.org/ns/shacl#")
+        self.assertTrue(any(s for s in g.subjects(RDF.type, SH.NodeShape)))
 
 if __name__ == '__main__':
     unittest.main()
