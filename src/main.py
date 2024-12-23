@@ -77,5 +77,5 @@ def main():
     shacl_graph = create_shacl_shapes(args.input)
     shacl_graph.serialize(destination=args.output, format="turtle", encoding="utf-8")
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     main()

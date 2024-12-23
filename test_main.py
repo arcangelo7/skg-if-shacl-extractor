@@ -25,6 +25,7 @@ ex:TestClass a owl:Class ;
 - ex:stringProp -[1]-> xsd:string
 - ex:intProp -[0..1]-> xsd:integer
 - ex:objectProp -[1..*]-> ex:OtherClass
+- ex:literalProp -[1]-> rdfs:Literal
 """ .
 
 ex:OtherClass a owl:Class .
@@ -59,12 +60,13 @@ ex:OtherClass a owl:Class .
         shape_uri = URIRef("http://example.org/TestClassShape")
         
         property_shapes = list(shacl_graph.objects(shape_uri, SH.property, unique=True))
-        self.assertEqual(len(property_shapes), 3)
+        self.assertEqual(len(property_shapes), 4)
         
         props_found = {
             'stringProp': False,
             'intProp': False,
-            'objectProp': False
+            'objectProp': False,
+            'literalProp': False
         }
         
         for prop_shape in property_shapes:
@@ -82,6 +84,11 @@ ex:OtherClass a owl:Class .
                 props_found['objectProp'] = True
                 self.assertIn((prop_shape, SH["class"], EX.OtherClass), shacl_graph)
                 self.assertIn((prop_shape, SH.minCount, Literal(1)), shacl_graph)
+            elif path == EX.literalProp:
+                props_found['literalProp'] = True
+                self.assertIn((prop_shape, SH.nodeKind, SH.Literal), shacl_graph)
+                self.assertIn((prop_shape, SH.minCount, Literal(1)), shacl_graph)
+                self.assertIn((prop_shape, SH.maxCount, Literal(1)), shacl_graph)
         
         self.assertTrue(all(props_found.values()))
 
