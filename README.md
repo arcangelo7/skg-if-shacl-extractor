@@ -27,7 +27,12 @@ For example:
 
 ## Installation
 
-1. Clone the repository
+1. Clone the repository with its submodules:
+
+```bash
+git clone --recurse-submodules https://github.com/arcangelo7/skg-if-shacl-extractor.git
+```
+
 2. Install dependencies using [Poetry](https://python-poetry.org/):
 
 ```bash
