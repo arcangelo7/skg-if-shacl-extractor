@@ -1,0 +1,7 @@
+[submodule "skg-if-context"]
+    path = skg-if-context
+    url = https://github.com/skg-if/context.git
+
+[submodule "skg-if-examples"] 
+    path = skg-if-examples
+    url = https://github.com/skg-if/examples.git 
