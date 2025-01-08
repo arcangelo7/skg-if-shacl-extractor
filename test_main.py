@@ -112,7 +112,7 @@ ex:NoDescClass a owl:Class .
         input_file = self.input_file
         output_file = Path(self.temp_dir) / "test_main_output.ttl"
         
-        test_args = ['prog_name', str(input_file), str(output_file)]
+        test_args = ['prog_name', '--input', str(input_file), str(output_file)]
         with unittest.mock.patch('sys.argv', test_args):
             from src.main import main
             main()
