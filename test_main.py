@@ -6,7 +6,7 @@ import unittest.mock
 
 from rdflib import Literal, Namespace, URIRef, Graph
 from rdflib.namespace import RDF
-from src.main import create_shacl_shapes
+from src.main import create_shacl_shapes, get_ontology_path
 
 
 class TestTTLToSHACL(unittest.TestCase):
@@ -113,6 +113,42 @@ ex:NoDescClass a owl:Class .
         output_file = Path(self.temp_dir) / "test_main_output.ttl"
         
         test_args = ['prog_name', '--input', str(input_file), str(output_file)]
+        with unittest.mock.patch('sys.argv', test_args):
+            from src.main import main
+            main()
+        
+        self.assertTrue(output_file.exists())
+        g = Graph()
+        g.parse(output_file, format='turtle')
+        
+        SH = Namespace("http://www.w3.org/ns/shacl#")
+        self.assertTrue(any(s for s in g.subjects(RDF.type, SH.NodeShape)))
+
+    def test_get_ontology_path_with_version(self):
+        """Test get_ontology_path with a specific version"""
+        version = "1.0.0"
+        expected_path = str(Path("data-model") / "ontology" / "1.0.0" / "skg-o.ttl")
+        actual_path = get_ontology_path(version)
+        self.assertEqual(actual_path, expected_path)
+
+    def test_get_ontology_path_current(self):
+        """Test get_ontology_path with no version (should return current)"""
+        expected_path = str(Path("data-model") / "ontology" / "current" / "skg-o.ttl")
+        actual_path = get_ontology_path()
+        self.assertEqual(actual_path, expected_path)
+
+    def test_get_ontology_path_invalid_version(self):
+        """Test get_ontology_path with an invalid version"""
+        invalid_version = "999.999.999"
+        with self.assertRaises(ValueError) as context:
+            get_ontology_path(invalid_version)
+        self.assertIn("Ontology version 999.999.999 not found", str(context.exception))
+
+    def test_version_argument_in_main(self):
+        """Test main function with version argument"""
+        output_file = Path(self.temp_dir) / "version_test_output.ttl"
+        
+        test_args = ['prog_name', '--version', '1.0.0', str(output_file)]
         with unittest.mock.patch('sys.argv', test_args):
             from src.main import main
             main()

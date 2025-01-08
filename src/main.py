@@ -13,7 +13,7 @@ def get_ontology_path(version: Optional[str] = None) -> str:
     Get the path to the ontology file based on version.
     If version is None, returns the current version.
     """
-    base_path = Path("data-model")
+    base_path = Path("data-model") / "ontology"
     
     if version is None:
         return str(base_path / "current" / "skg-o.ttl")
