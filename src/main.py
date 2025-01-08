@@ -7,14 +7,14 @@ from typing import Optional
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
 from rdflib.namespace import OWL, RDF, XSD
 
-DEFAULT_ONTOLOGY_PATH = "ontology/current/skg-o.ttl"
+DEFAULT_ONTOLOGY_PATH = "data-model/current/skg-o.ttl"
 
 def get_ontology_path(version: Optional[str] = None) -> str:
     """
     Get the path to the ontology file based on version.
     If version is None, returns the current version.
     """
-    base_path = Path("ontology")
+    base_path = Path("data-model")
     
     if version is None:
         return str(base_path / "current" / "skg-o.ttl")

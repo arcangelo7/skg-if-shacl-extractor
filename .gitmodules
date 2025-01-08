@@ -4,7 +4,7 @@
 [submodule "examples"]
 	path = examples
 	url = https://github.com/skg-if/examples
-[submodule "ontology"]
-	path = ontology
+[submodule "data-model"]
+	path = data-model
 	url = https://github.com/skg-if/data-model
 
