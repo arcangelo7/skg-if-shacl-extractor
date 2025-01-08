@@ -1,9 +1,29 @@
 import argparse
 import re
+import os
+from pathlib import Path
+from typing import Optional
 
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
 from rdflib.namespace import OWL, RDF, XSD
 
+DEFAULT_ONTOLOGY_PATH = "ontology/current/skg-o.ttl"
+
+def get_ontology_path(version: Optional[str] = None) -> str:
+    """
+    Get the path to the ontology file based on version.
+    If version is None, returns the current version.
+    """
+    base_path = Path("ontology")
+    
+    if version is None:
+        return str(base_path / "current" / "skg-o.ttl")
+    
+    version_path = base_path / version / "skg-o.ttl"
+    if not version_path.exists():
+        raise ValueError(f"Ontology version {version} not found at {version_path}")
+    
+    return str(version_path)
 
 def create_shacl_shapes(input_file: str) -> Graph:
     g = Graph()
@@ -68,13 +88,23 @@ def create_shacl_shapes(input_file: str) -> Graph:
     return shacl
 
 def main():
-    parser = argparse.ArgumentParser(description='Convert TTL ontology to SHACL shapes')
-    parser.add_argument('input', help='Input TTL file path')
+    parser = argparse.ArgumentParser(description='Convert SKG ontology to SHACL shapes')
+    parser.add_argument('--input', help='Input TTL file path (optional)')
+    parser.add_argument('--version', help='Ontology version (e.g., "1.0.0", "current")')
     parser.add_argument('output', help='Output SHACL file path')
     
     args = parser.parse_args()
     
-    shacl_graph = create_shacl_shapes(args.input)
+    # If no input file is specified, use the versioned ontology
+    if args.input:
+        input_path = args.input
+    else:
+        try:
+            input_path = get_ontology_path(args.version)
+        except ValueError as e:
+            parser.error(str(e))
+    
+    shacl_graph = create_shacl_shapes(input_path)
     shacl_graph.serialize(destination=args.output, format="turtle", encoding="utf-8")
 
 if __name__ == "__main__": # pragma: no cover

@@ -10,7 +10,9 @@ A Python tool to automatically generate SHACL shapes from OWL ontologies that fo
 
 ## Description
 
-This tool extracts SHACL (Shapes Constraint Language) shapes from OWL ontologies that use a specific documentation pattern for describing class properties. It parses property descriptions in the format:
+This tool extracts SHACL (Shapes Constraint Language) shapes from OWL ontologies that use a specific documentation pattern for describing class properties. It can work with both the SKG-IF ontology versions and custom ontologies that follow the same documentation pattern.
+
+The tool parses property descriptions in the format:
 
 - propertyName -[cardinality]-> targetType
 
@@ -41,26 +43,33 @@ poetry install
 
 ## Usage
 
-To run the tool, use the following command:
+The tool can be used in three ways:
+
+### 1. Generate SHACL shapes from current SKG-IF ontology
 
 ```bash
-poetry run extractor <input_file> <output_file>
+poetry run extractor shapes.ttl
 ```
 
-Or if you want to run it directly:
+### 2. Generate SHACL shapes from a specific SKG-IF ontology version
 
 ```bash
-python -m src.main <input_file> <output_file>
+poetry run extractor --version 1.0.0 shapes.ttl
 ```
 
-where:
-- `input_file`: Path to the input OWL ontology file in Turtle (.ttl) format. This file should contain class definitions with property descriptions following the SKG-IF documentation pattern.
-- `output_file`: Path where the generated SHACL shapes will be saved (in Turtle format). The tool will create or overwrite this file.
+### 3. Generate SHACL shapes from a custom ontology file
 
-Example:
 ```bash
-poetry run extractor ontology.ttl shapes.ttl
+poetry run extractor --input path/to/ontology.ttl shapes.ttl
 ```
+
+Arguments:
+
+- `--version`: (Optional) Specific version of the SKG-IF ontology to use (e.g., "1.0.0", "current")
+- `--input`: (Optional) Path to a custom input OWL ontology file in Turtle (.ttl) format
+- `output_file`: Path where the generated SHACL shapes will be saved (in Turtle format)
+
+Note: If neither `--version` nor `--input` is specified, the tool will use the current version of the SKG-IF ontology.
 
 ## Testing
 

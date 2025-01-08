@@ -1,6 +1,9 @@
 [submodule "context"]
 	path = context
-	url = https://github.com/skg-if/context
+	url = https://github.com/skg-if/context.git
 [submodule "examples"]
 	path = examples
-	url = https://github.com/skg-if/examples
+	url = https://github.com/skg-if/examples.git
+[submodule "ontology"]
+	path = ontology
+	url = https://github.com/skg-if/data-model.git
