@@ -160,5 +160,96 @@ ex:NoDescClass a owl:Class .
         SH = Namespace("http://www.w3.org/ns/shacl#")
         self.assertTrue(any(s for s in g.subjects(RDF.type, SH.NodeShape)))
 
+    def test_current_ontology_conversion(self):
+        """Test the conversion of the current ontology version to SHACL shapes"""
+        input_file = Path(get_ontology_path())
+        output_file = Path(self.temp_dir) / "current_ontology_shapes.ttl"
+        
+        shacl_graph = create_shacl_shapes(input_file)
+        shacl_graph.serialize(destination=output_file, format="turtle", encoding="utf-8")
+        
+        SH = Namespace("http://www.w3.org/ns/shacl#")
+        FRAPO = Namespace("http://purl.org/cerif/frapo/")
+        FOAF = Namespace("http://xmlns.com/foaf/0.1/")
+        PRISM = Namespace("http://prismstandard.org/namespaces/basic/2.0/")
+        XSD = Namespace("http://www.w3.org/2001/XMLSchema#")
+        RDFS = Namespace("http://www.w3.org/2000/01/rdf-schema#")
+                
+        # 1. Test Grant shape
+        grant_shape = URIRef("http://purl.org/cerif/frapo/GrantShape")
+        self.assertIn((grant_shape, RDF.type, SH.NodeShape), shacl_graph)
+        self.assertIn((grant_shape, SH.targetClass, FRAPO.Grant), shacl_graph)
+        
+        # Get all property shapes for Grant
+        grant_properties = list(shacl_graph.objects(grant_shape, SH.property))
+        
+        # Test specific property constraints for Grant
+        expected_properties = {
+            'hasGrantNumber': {
+                'path': FRAPO.hasGrantNumber,
+                'datatype': XSD.string,
+                'maxCount': 1
+            },
+            'hasAcronym': {
+                'path': FRAPO.hasAcronym,
+                'nodeKind': SH.Literal,
+                'maxCount': 1
+            },
+            'hasCallIdentifier': {
+                'path': FRAPO.hasCallIdentifier,
+                'nodeKind': SH.Literal,
+                'maxCount': 1
+            },
+            'keyword': {
+                'path': PRISM.keyword,
+                'nodeKind': SH.Literal
+            }
+        }
+        
+        found_properties = set()
+        for prop_shape in grant_properties:
+            path = shacl_graph.value(prop_shape, SH.path)
+            if path in [p['path'] for p in expected_properties.values()]:
+                prop_name = [k for k, v in expected_properties.items() if v['path'] == path][0]
+                found_properties.add(prop_name)
+                
+                if 'datatype' in expected_properties[prop_name]:
+                    self.assertIn(
+                        (prop_shape, SH.datatype, expected_properties[prop_name]['datatype']), 
+                        shacl_graph
+                    )
+                if 'nodeKind' in expected_properties[prop_name]:
+                    self.assertIn(
+                        (prop_shape, SH.nodeKind, expected_properties[prop_name]['nodeKind']), 
+                        shacl_graph
+                    )
+                if 'maxCount' in expected_properties[prop_name]:
+                    self.assertIn(
+                        (prop_shape, SH.maxCount, Literal(expected_properties[prop_name]['maxCount'])), 
+                        shacl_graph
+                    )
+        
+        # Verify all expected properties were found
+        self.assertEqual(found_properties, set(expected_properties.keys()))
+        
+        # 2. Test Agent shape
+        agent_shape = URIRef("http://xmlns.com/foaf/0.1/AgentShape")
+        self.assertIn((agent_shape, RDF.type, SH.NodeShape), shacl_graph)
+        self.assertIn((agent_shape, SH.targetClass, FOAF.Agent), shacl_graph)
+        
+        # Get all property shapes for Agent
+        agent_properties = list(shacl_graph.objects(agent_shape, SH.property))
+        
+        # Test name property for Agent
+        name_found = False
+        for prop_shape in agent_properties:
+            path = shacl_graph.value(prop_shape, SH.path)
+            if path == FOAF.name:
+                name_found = True
+                self.assertIn((prop_shape, SH.nodeKind, SH.Literal), shacl_graph)
+                self.assertIn((prop_shape, SH.maxCount, Literal(1)), shacl_graph)
+        
+        self.assertTrue(name_found, "foaf:name property shape not found for Agent")
+
 if __name__ == '__main__':
     unittest.main()

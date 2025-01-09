@@ -43,13 +43,15 @@ def create_shacl_shapes(input_file: str) -> Graph:
             shacl.add((shape_uri, SH.targetClass, cls))
             
             desc_str = str(desc)
-            properties = desc_str.split("\n")[1:]
+            # Split on either '* ' or '- ' at the start of lines
+            properties = [p for p in re.split(r'\n[*-] ', desc_str) if p.strip()]
 
             for prop in properties:
                 if not prop.strip():
                     continue
                     
-                match = re.match(r'- ([\w:]+) -\[(\d+|\*)(\.\.)?(\d+|\*)?]->\s+([\w:]+)', prop.strip())
+                # Updated regex to handle both '*' and 'N' for unlimited cardinality
+                match = re.match(r'([\w:]+) -\[(\d+|[*N])(\.\.)?(\d+|[*N])?]->\s+([\w:]+)', prop.strip())
                 if match:
                     prop_name, card_min, range_sep, card_max, target = match.groups()
                     bnode = BNode()
@@ -62,14 +64,15 @@ def create_shacl_shapes(input_file: str) -> Graph:
                             prop_uri = URIRef(ns + local)
                             shacl.add((bnode, SH.path, prop_uri))
                         
-                        if range_sep is None and card_min != '*':
+                        # Handle cardinality
+                        if range_sep is None and card_min not in ['*', 'N']:
                             exact_card = int(card_min)
                             shacl.add((bnode, SH.minCount, Literal(exact_card, datatype=XSD.integer)))
                             shacl.add((bnode, SH.maxCount, Literal(exact_card, datatype=XSD.integer)))
                         else:
-                            if card_min and card_min != '*':
+                            if card_min and card_min not in ['*', 'N']:
                                 shacl.add((bnode, SH.minCount, Literal(int(card_min), datatype=XSD.integer)))
-                            if card_max and card_max != '*':
+                            if card_max and card_max not in ['*', 'N']:
                                 shacl.add((bnode, SH.maxCount, Literal(int(card_max), datatype=XSD.integer)))
                         
                         if target:
