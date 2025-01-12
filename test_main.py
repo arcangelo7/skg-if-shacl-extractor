@@ -256,42 +256,73 @@ ex:NoDescClass a owl:Class .
         
         self.assertTrue(name_found, "foaf:name property shape not found for Agent")
 
-    # def test_opencitations_example_validation(self):
-    #     """Test that the OpenCitations example data validates against the SHACL shapes"""
-    #     shapes_graph = create_shacl_shapes(Path(get_ontology_path()))
+    def test_opencitations_example_validation(self):
+        """Test that the OpenCitations example data validates against the SHACL shapes"""
+        shapes_graph = create_shacl_shapes(Path(get_ontology_path()))
         
-    #     data_graph = Graph()
-    #     with open('examples/OpenCitations/oc_1.jsonld', 'r', encoding='utf-8') as f:
-    #         jsonld_data = json.load(f)
+        data_graph = Graph()
+        with open('examples/OpenCitations/oc_1.jsonld', 'r', encoding='utf-8') as f:
+            jsonld_data = json.load(f)
         
-    #     data_graph.parse(data=json.dumps(jsonld_data), format='json-ld')
+        data_graph.parse(data=json.dumps(jsonld_data), format='json-ld')
 
-    #     # Test basic structural expectations
-    #     # Verifichiamo la presenza delle proprietà chiave invece dei tipi
-    #     DCTERMS = Namespace("http://purl.org/dc/terms/")
-    #     self.assertTrue(any(data_graph.subjects(DCTERMS.title, None)), 
-    #                    "No entities with title found in the data")
+        # Test basic structural expectations
+        # Verifichiamo la presenza delle proprietà chiave invece dei tipi
+        DCTERMS = Namespace("http://purl.org/dc/terms/")
+        self.assertTrue(any(data_graph.subjects(DCTERMS.title, None)), 
+                       "No entities with title found in the data")
         
-    #     FOAF = Namespace("http://xmlns.com/foaf/0.1/")
-    #     self.assertTrue(any(data_graph.subjects(FOAF.name, None)), 
-    #                    "No entities with name found in the data")
+        FOAF = Namespace("http://xmlns.com/foaf/0.1/")
+        self.assertTrue(any(data_graph.subjects(FOAF.name, None)), 
+                       "No entities with name found in the data")
 
-    #     # Validate with inference enabled
-    #     conforms, results_graph, results_text = validate(
-    #         data_graph=data_graph,
-    #         shacl_graph=shapes_graph,
-    #         debug=False,
-    #     )
+        # Validate with inference enabled
+        conforms, results_graph, results_text = validate(
+            data_graph=data_graph,
+            shacl_graph=shapes_graph,
+            debug=False,
+        )
         
-    #     if not conforms:
-    #         print("\nValidation Results:")
-    #         print(results_text)
+        if not conforms:
+            print("\nValidation Results:")
+            print(results_text)
         
-    #     self.assertTrue(
-    #         conforms, 
-    #         f"OpenCitations example data does not conform to SHACL shapes. Validation results:\n{results_text}"
-    #     )
+        self.assertTrue(
+            conforms, 
+            f"OpenCitations example data does not conform to SHACL shapes. Validation results:\n{results_text}"
+        )
         
+
+    def test_all_current_examples_validation(self):
+        """Test all example files in the current version folder"""
+        shapes_graph = create_shacl_shapes(Path(get_ontology_path()))
+        examples_path = Path('context/ver/current/samples')
+        
+        example_files = list(examples_path.glob('example-*.json'))
+        
+        for example_file in example_files:
+            with self.subTest(example=example_file.name):
+                data_graph = Graph()
+                with open(example_file, 'r', encoding='utf-8') as f:
+                    jsonld_data = json.load(f)
+                
+                data_graph.parse(data=json.dumps(jsonld_data), format='json-ld')
+                
+                conforms, results_graph, results_text = validate(
+                    data_graph=data_graph,
+                    shacl_graph=shapes_graph,
+                    debug=False,
+                )
+                
+                if not conforms:
+                    print(f"\n{example_file.name} Validation Results:")
+                    print(results_text)
+                
+                self.assertTrue(
+                    conforms, 
+                    f"{example_file.name} does not conform to SHACL shapes. "
+                    f"Validation results:\n{results_text}"
+                )
 
 if __name__ == '__main__':
     unittest.main()
