@@ -45,24 +45,24 @@ def create_shacl_shapes(input_file: str) -> Graph:
             desc_str = str(desc)
             # Split on either '* ' or '- ' at the start of lines
             properties = [p for p in re.split(r'\n[*-] ', desc_str) if p.strip()]
-
+            
             for prop in properties:
                 if not prop.strip():
                     continue
-                    
-                # Updated regex to handle both '*' and 'N' for unlimited cardinality
+                
                 match = re.match(r'([\w:]+) -\[(\d+|[*N])(\.\.)?(\d+|[*N])?]->\s+([\w:]+)', prop.strip())
                 if match:
                     prop_name, card_min, range_sep, card_max, target = match.groups()
-                    bnode = BNode()
-                    shacl.add((shape_uri, SH.property, bnode))
                     
-                    if prop_name:
-                        prefix, local = prop_name.split(':')
-                        ns = str(g.store.namespace(prefix))
-                        if ns:
-                            prop_uri = URIRef(ns + local)
-                            shacl.add((bnode, SH.path, prop_uri))
+                    prefix, local = prop_name.split(':')
+                    ns = str(g.store.namespace(prefix))
+                    if ns:
+                        prop_uri = URIRef(ns + local)
+                        
+                        # Create property shape
+                        bnode = BNode()
+                        shacl.add((shape_uri, SH.property, bnode))
+                        shacl.add((bnode, SH.path, prop_uri))
                         
                         # Handle cardinality
                         if range_sep is None and card_min not in ['*', 'N']:
@@ -75,17 +75,33 @@ def create_shacl_shapes(input_file: str) -> Graph:
                             if card_max and card_max not in ['*', 'N']:
                                 shacl.add((bnode, SH.maxCount, Literal(int(card_max), datatype=XSD.integer)))
                         
+                        # Handle target type
                         if target:
                             target_prefix, target_local = target.split(':')
                             target_ns = str(g.store.namespace(target_prefix))
                             if target_ns:
-                                target_uri = URIRef(target_ns + target_local)
-                                if (target_uri, RDF.type, OWL.Class) in g:
-                                    shacl.add((bnode, SH['class'], target_uri))
-                                elif target == "rdfs:Literal":
+                                if target == "rdfs:Literal":
                                     shacl.add((bnode, SH.nodeKind, SH.Literal))
                                 elif target.startswith("xsd:"):
                                     shacl.add((bnode, SH.datatype, URIRef(f"http://www.w3.org/2001/XMLSchema#{target_local}")))
+                                else:
+                                    # Creiamo un or tra class e nodeKind
+                                    or_node = BNode()
+                                    shacl.add((bnode, SH['or'], or_node))
+                                    
+                                    # Prima alternativa: la classe specifica
+                                    class_constraint = BNode()
+                                    shacl.add((or_node, RDF.first, class_constraint))
+                                    shacl.add((class_constraint, SH['class'], URIRef(target_ns + target_local)))
+                                    
+                                    # Seconda alternativa: qualsiasi IRI o blank node
+                                    rest_node = BNode()
+                                    shacl.add((or_node, RDF.rest, rest_node))
+                                    
+                                    nodekind_constraint = BNode()
+                                    shacl.add((rest_node, RDF.first, nodekind_constraint))
+                                    shacl.add((nodekind_constraint, SH.nodeKind, SH.BlankNodeOrIRI))
+                                    shacl.add((rest_node, RDF.rest, RDF.nil))
     
     return shacl
 
